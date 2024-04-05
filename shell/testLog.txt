@@ -8,5 +8,5 @@ PASSED: pipe
 FAILED: 2 pipes
 PASSED: redirect input
 PASSED: redirect output
-FAILED: background
+PASSED: background
 PASSED: change dir

@@ -12,30 +12,6 @@ def promptCommand():
     
     return input()                      # Return command
 
-# Auto complete command fro directory
-def autoCompleteListDirectory(text, state):
-    dirs = [d for d in os.listdir('.') if os.path.isdir(d)] # Creates list of directories in path
-    options = [d for d in dirs if d.startswith(text)]       # Filters out based on input text so far
-    if state < len(options):                                # State is index of currently displayed completion
-        return options[state]                               # Return state of available options
-    else:
-        return None                                         # Return None
-
-readline.set_completer(autoCompleteListDirectory)           # Set auto complete function for readline     
-readline.parse_and_bind("tab: complete")                    # Binds the Tab key to trigger auto completion
-
-def autoCompleteListFiles(text, state):
-    files_and_dirs = os.listdir('.')                                         # Get list of files and directories in the current directory
-    options = [entry for entry in files_and_dirs if entry.startswith(text)]  # Filter based on input text so far
-    if state < len(options):                                                 # Check if state is within available options
-        return options[state]                                                # Return the state of available options
-    else:
-        return None                                                          # Return None if no more completions
-
-readline.set_completer(autoCompleteListFiles)                                # Set auto-complete function for readline
-readline.parse_and_bind("`: complete")                                       # Bind Tab key for auto-completion
-
-
 while True:                                                 # Run forever
 
     command = promptCommand().strip()                       # Get command
@@ -63,6 +39,12 @@ while True:                                                 # Run forever
     
     rc = os.fork()                                          # create a child process
 
+    wait = True
+
+    if command[-1] == '&':
+        wait = False
+        command.pop()
+        
     if rc < 0:                                              # Fork failed
         exit(1)
     elif rc == 0:                                           # I am child
@@ -75,7 +57,8 @@ while True:                                                 # Run forever
         run_command(command)                                # Execute command
             
     else:                                                   # I am parent (forked ok)
-        childPidCode = os.wait()                            # Wait for child process to terminate  
+        if wait:
+            childPidCode = os.wait()                            # Wait for child process to terminate  
 
 
     

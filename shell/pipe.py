@@ -23,7 +23,7 @@ def pipes(command):
         for fd in (pipeWriter, pipeReader): # Close pipe file descriptors in child process, not needed
             os.close(fd)
         run_command(leftSide)       # Execute command, sending its output to the pipe.
-    else:
+    else:                           # I am parent
         os.close(0)                 # Close stdin FD
         os.dup(pipeReader)          # Duplicate FD pipeReader, Redirects stdin to read from pipe
         os.set_inheritable(0,True)  # Want stdin to be inheritable by child process
